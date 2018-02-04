@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name="mwt",
-        version="1.0",
+        version="0.9.0",
         description="Memoize with timeout",
         long_description=readme(),
         url="https://github.com/ak15199/mwt.git",
