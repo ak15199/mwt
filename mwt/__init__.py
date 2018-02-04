@@ -131,13 +131,13 @@ class mwt(object):
     def reset():
         """Reset counters on all of the funtion caches
         """
-        return [cache.reset() for func, cache in MWT._caches.items()]
+        return [cache.reset() for func, cache in mwt._caches.items()]
 
     @staticmethod
     def purge():
         """Purge all function caches and reset counters
         """
-        return [cache.purge() for func, cache in MWT._caches.items()]
+        return [cache.purge() for func, cache in mwt._caches.items()]
 
     @staticmethod
     def stats():
@@ -152,13 +152,13 @@ class mwt(object):
             "length": The current number of entries in the cache
             "hwm": The highest number of entries in the cache
         """
-        return [cache.stats() for func, cache in MWT._caches.items()]
+        return [cache.stats() for func, cache in mwt._caches.items()]
 
     def __call__(self, f):
         try:
-            cache = MWT._caches[f]
+            cache = mwt._caches[f]
         except:
-            cache = MWT._caches[f] = Cache(f, self.timeout, self.purgedepth)
+            cache = mwt._caches[f] = Cache(f, self.timeout, self.purgedepth)
 
         def func(*args, **kwargs):
             try:
