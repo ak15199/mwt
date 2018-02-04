@@ -8,7 +8,8 @@ http://code.activestate.com/recipes/325905-memoize-decorator-with-timeout/
 
 
 class Cache(object):
-
+    """Function cache object. Do not call this directly.
+    """
     def __init__(self, func, timeout, purgedepth=None):
         """
         func: function that is subject of memoization
