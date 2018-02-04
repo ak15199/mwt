@@ -32,6 +32,52 @@ At its simplest, simply decorate your method with MWT:
     print(fibonacci(500))
     print(fibonacci(500))
 
+### A Note of Caution
+
+Just because you can do something, it doesn't mean that you should.
+
+The MWT decorator is a quick and easy way to resduce extended time in
+calculation, but it is by definition not perfect: there are overheads to
+the memoization and garbage collection process implicit in memoization,
+and caution in its use is presented.
+
+In particular, watch out for the overall time executed, and secondly
+the cache hit ratio: if the percentage of hits is small, then the net
+effect is to add overhead, not reduce it.
+
+There are two things that can be done to evaluate performance. The first
+and most obvious is to profile timings and see whether time overall has
+been saved with the addition of the decorator.
+
+The other is to analyze cache statistics after the containing code has been
+running for a while. MWT provides a stats interface to assist with this,
+and it can be utilized like this:
+
+    fmt = "%-15s %8s %8s %8s %8s %8s %8s"
+    print(fmt%("Cache", "Length", "Hits", "Misses", "Purged",
+            "Timeouts", "HWM"))
+    stats = mwt.stats()
+    for stat in stats:
+        print(fmt%(stat["cache"], stat["length"], stat["hits"],
+                stat["misses"], stat["purged"], stat["timeouts"],
+                stat["hwm"]))
+
+Which will produce output like this which will allow you to see how
+effective the memoization process is for each of the functions that are
+decorated:
+
+    Cache               Length    Hits   Misses   Purged Timeouts      HWM
+    opc.hue:rgbToHsv         0       0        0        0        0        0
+    opc.hue:hue              0       0        0        0        0        0
+    opc.hue:hsvToRgb     27167   32785      270     5103        0    27183
+
+A high hit:miss ratio indicates that the cache is performing well.
+
+If the ratio is poor, though, then don't give up straight away: it's
+possible that matters may be improved by tweaking the target method's
+calling parameters (for example, bounding a float to perhaps a couple of
+digits of precision).
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
