@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name="mwt",
-        version="0.9.0b1",
+        version="0.9.0",
         description="Memoize with timeout",
         long_description=readme(),
         url="https://github.com/ak15199/mwt.git",
@@ -14,12 +14,13 @@ setup(name="mwt",
         author_email="alex_w_king@yahoo.com",
         license="MIT",
         classifiers=[
-            "Development Status :: 4 - Beta",
+            "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Developers",
-            "Topic :: Software Development :: Build Tools",
+            "Topic :: Software Development :: Libraries :: Python Modules",
             "Programming Language :: Python :: 2",
             "Programming Language :: Python :: 2.7",
             "Programming Language :: Python :: 3",
+            "License :: OSI Approved :: BSD License",
             ],
         keywords="memoize cache python function decorator",
         )
