@@ -1,5 +1,6 @@
 from time import time
 import logging
+from pdb import set_trace as bp
 
 """
 
@@ -63,20 +64,15 @@ class Cache(object):
         the list.
         """
         now = time()
-        key = self._key(args, kwargs)
-        self.expiry[key] = self.timeout + now
-        self.cache[key] = result
-        self.refs.append(key)
-        self.hwm = max(self.hwm, len(self.cache))
 
-        try:
-            purgedepth = self.purgedepth
-            if not purgedepth:
-                purgedepth = max(3, len(self.cache)*0.5)
+        purgedepth = self.purgedepth
+        if not purgedepth:
+            purgedepth = int(len(self.cache)*0.5)
 
-            while purgedepth:
-                purgedepth = purgedepth-1
-                key = self.refs[0]
+        while purgedepth and len(self.refs):
+            purgedepth = purgedepth-1
+            key = self.refs[0]
+            try:
                 if self.expiry[key]<now:
                     del self.expiry[key]
                     del self.cache[key]
@@ -84,9 +80,15 @@ class Cache(object):
                     self.purged += 1
                 else:
                     break
+            except:
+                self.refs.pop(0)
+                continue
 
-        except KeyError:
-            pass
+        key = self._key(args, kwargs)
+        self.expiry[key] = self.timeout + now
+        self.cache[key] = result
+        self.refs.append(key)
+        self.hwm = max(self.hwm, len(self.cache))
 
     def reset(self):
         self.hits = 0
