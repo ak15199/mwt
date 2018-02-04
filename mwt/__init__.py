@@ -1,6 +1,7 @@
 from time import time
 
 """
+
 Inspired by:
 http://code.activestate.com/recipes/325905-memoize-decorator-with-timeout/
 """
@@ -107,16 +108,50 @@ class Cache(object):
 
 
 class mwt(object):
-    """Memoize With Timeout"""
+    """Memoize With Timeout
+    
+    """
 
     _caches = {}
 
     def __init__(self, timeout=2, purgedepth=None):
+        """Memoize decorator
+        
+        Args:
+            timeout (int): interval in seconds to keep cache entries alive
+            purgedepth (int): number of entries to attempt to purge each add cycle
+
+        Unless a value is specified, memoize will attempt to automatically
+        determine how many entries to purge.
+        """
         self.timeout = timeout
         self.purgedepth = purgedepth
 
     @staticmethod
+    def reset():
+        """Reset counters on all of the funtion caches
+        """
+        return [cache.reset() for func, cache in MWT._caches.items()]
+
+    @staticmethod
+    def purge():
+        """Purge all function caches and reset counters
+        """
+        return [cache.purge() for func, cache in MWT._caches.items()]
+
+    @staticmethod
     def stats():
+        """Reap statistics from individual function caches
+
+        This method will return a list of dicts, one from each function cache.
+
+            "cache": The name of the function being memoized
+            "hits": The numer of times a cache hit occurred
+            "misses": The numer of times a cache miss occurred
+            "timeouts": The numer of times a cache hit found a timed-out value
+            "length": The current number of entries in the cache
+            "hwm": The highest number of entries in the cache
+        """
         return [cache.stats() for func, cache in MWT._caches.items()]
 
     def __call__(self, f):
