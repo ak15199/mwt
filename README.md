@@ -18,10 +18,11 @@ If you want to run the latest version of the code, you can install from git:
 
 At its simplest, simply decorate your method with MWT:
 
+    import timeit
     from mwt import mwt
 
     @mwt()
-    def fibonacci():
+    def fibonacci(n):
         a,b = 1,1
 
         for i in range(n-1):
@@ -29,8 +30,19 @@ At its simplest, simply decorate your method with MWT:
 
         return a
 
-    print(fibonacci(500))
-    print(fibonacci(500))
+    def test():
+        fibonacci(5)
+
+    for i in range(5):
+        print timeit.timeit("fibonacci(50000)", "from __main__ import fibonacci", number=1)
+
+    pi@pi:/tmp $ python fib.py
+    0.470113992691
+    4.10079956055e-05
+    3.50475311279e-05
+    3.88622283936e-05
+    2.59876251221e-05
+
 
 ### A Note of Caution
 
