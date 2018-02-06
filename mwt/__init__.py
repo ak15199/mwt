@@ -1,6 +1,4 @@
 from time import time
-import logging
-from pdb import set_trace as bp
 
 """
 
@@ -29,8 +27,7 @@ class Cache(object):
 
     def _key(self, args, kwargs):
         kw = kwargs.items()
-        kw.sort()
-        return (args, tuple(kw))
+        return (args, tuple(sorted(kw)))
 
     def lookup(self, args, kwargs):
         """
@@ -64,37 +61,33 @@ class Cache(object):
         the list.
         """
         now = time()
-
-        purgedepth = self.purgedepth
-        if not purgedepth:
-            purgedepth = int(len(self.cache)*0.5)
-
-        while purgedepth and len(self.refs):
-            purgedepth = purgedepth-1
-            key = self.refs[0]
-            try:
-                if self.expiry[key]<now:
-                    del self.expiry[key]
-                    del self.cache[key]
-                    self.refs.pop(0)
-                    self.purged += 1
-                else:
-                    break
-            except:
-                self.refs.pop(0)
-                continue
-
         key = self._key(args, kwargs)
         self.expiry[key] = self.timeout + now
         self.cache[key] = result
         self.refs.append(key)
         self.hwm = max(self.hwm, len(self.cache))
 
+        try:
+            purgedepth = self.purgedepth
+            if not purgedepth:
+                purgedepth = min(3, len(self.cache)*0.05)
+
+            while purgedepth:
+                purgedepth = purgedepth-1
+                key = self.refs[0]
+                if self.expiry[key]<now:
+                    del self.expiry[key]
+                    del self.cache[key]
+                    self.refs.pop(0)
+                else:
+                    break
+        except KeyError:
+            pass
+
     def reset(self):
         self.hits = 0
         self.misses = 0
         self.timeouts = 0
-        self.purged = 0
 
     def purge(self):
         self.cache = {}
@@ -108,7 +101,6 @@ class Cache(object):
                 "cache": self.name,
                 "hits": self.hits,
                 "misses": self.misses,
-                "purged": self.purged,
                 "timeouts": self.timeouts,
                 "length": len(self.cache),
                 "hwm": self.hwm,
@@ -153,13 +145,12 @@ class mwt(object):
 
         This method will return a list of dicts, one from each function cache.
 
-            "cache":    The name of the function being memoized
-            "hits":     The numer of times a cache hit occurred
-            "misses":   The numer of times a cache miss occurred
-            "purged":   The numer of times cache entries have been removed
+            "cache": The name of the function being memoized
+            "hits": The numer of times a cache hit occurred
+            "misses": The numer of times a cache miss occurred
             "timeouts": The numer of times a cache hit found a timed-out value
-            "length":   The current number of entries in the cache
-            "hwm":      The highest number of entries in the cache
+            "length": The current number of entries in the cache
+            "hwm": The highest number of entries in the cache
         """
         return [cache.stats() for func, cache in mwt._caches.items()]
 
