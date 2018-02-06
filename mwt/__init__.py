@@ -20,7 +20,7 @@ class Cache(object):
                     scrubbed. By default, attempt to automatically
                     contain length
         """
-        self.name = "%s:%s"%(func.__module__, func.func_name)
+        self.name = "%s:%s"%(func.__module__, func.__name__)
         self.timeout = timeout
         self.purgedepth = purgedepth
         self.hwm = 0
@@ -178,6 +178,6 @@ class mwt(object):
 
                 return result
 
-        func.func_name = f.func_name
+        func.__name__ = f.__name__
 
         return func
