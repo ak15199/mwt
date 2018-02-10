@@ -12,7 +12,7 @@ MWT can be installed using pip:
 
 If you want to run the latest version of the code, you can install from git:
 
-    $ pip install -U git+git://github.com/...
+    $ pip install -U git+git://github.com/ak15199/mwt.git
 
 ### Using MWT
 
@@ -102,7 +102,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 * **Alex King** - *Initial work* - [ak15199](https://github.com/ak15199)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/ak15199/mwt/contributors) who participated in this project.
 
 ## License
 
